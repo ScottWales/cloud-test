@@ -1,0 +1,44 @@
+#!/bin/bash
+
+(
+set -x
+
+old_umask=`umask`
+umask 077
+mkdir -p /root/.ssh
+# Insert repoaccess ssh private key here.
+cat <<EOF > /root/.ssh/id_rsa
+___REPOACCESS_PRIVATE_KEY___
+EOF
+# Add the host key for the repos machine into known_hosts.
+cat <<EOF >> /root/.ssh/known_hosts
+___REPOS_KNOWN_HOSTS_ENTRY___
+EOF
+umask $old_umask
+
+# Would also be nice to give this machine a known host key
+# (assuming that it's intended to be ssh'd into).
+# So maybe that's a job for puppet.
+
+# Set /etc/hostname appropriately.
+# (ie. to the vm name, not sure how to get it.)
+# (or paste it in here when this file gets created
+# by the nova boot wrapper.)
+# What should the domain be?  Puppet complains if the hostname isn't FQDN.
+# "os" for "openstack" seems as good as any...
+hostname ___NAME___.os
+# (or perhaps edit /etc/sysconfig/network and then run "service network restart")
+
+# Temporary: This will get into the system image.
+yum -y install git
+
+cd /etc
+[ -e puppet ] && rm -rf puppet.old && mv -i puppet puppet.old
+git clone ___REPO___ puppet
+cd puppet
+git submodule init
+git submodule update
+puppet apply /etc/puppet/manifests/site.pp
+
+) 2>&1 | tee /tmp/userdata.log
+

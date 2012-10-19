@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Run this from the base Puppet repository directory.
+
+dir="private/keys"
+
+if [ ! -d "$dir" ]; then
+	echo "Error: Cannot find $dir"
+	echo "Did you run this from the base Puppet repository directory?"
+	exit 1
+fi
+
+name="$1"
+repo="$2"
+ip="$3"
+shift 3
+
+if [ "$name" = "" -o "$ip" = "" -o "$repo" = "" ]; then
+	echo "Error: Usage: nova-boot <name> <repo> <ip> ..."
+	exit 1
+fi
+
+repoaccess_private_key="$(cat private/keys/repoaccess)"
+
+# Need to extract the hostname part out of the repo, and then
+# query it for its hostkey.
+repo_userhost="${repo%%:*}"
+case "$repo_userhost" in
+	*@*)
+		repo_host="$repo_userhost"
+		;;
+	*)
+		repo_host="${repo_userhost#*@}"
+		;;
+esac
+#repos_known_hosts_entry="repos.nci.org.au,192.43.239.99 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAv0YmSV894Dul2cCS/VCKhY5pZohdvhgaeYrKlcXHuCgMwgLAvClhK7Dp6SX7uukBhdSkn+58eEFbw0WtwYpMbmuoJKS+2ZiXVQb+GN2WheTowwfSDwIi5nzISHF98k7y1NUlrBVSxrDVJjqw5Qs0bpGbznjGhE7yy/PZqAwB2ckJ0/EnSc6OXGeiEAOoj5w2anaBuMholdqO3n35K4r/dh+/WTn3GD8TOp5UMSOyXguRQcIOcJGPltmILQngb76IZ36FbHSsbbS8mQd4W85dc+AP6+4BHBsMfl7C9p9uZ03YjTY0FdERigMOJmYdGuB8pnyX8nRdQT+7UdR3jjj6DQ=="
+repos_known_hosts_entry="$(ssh-keyscan "$repo_host")"
+
+userdata="$(sed \
+	-e 's,___NAME___,'"$name"',g' \
+	-e 's,___IP___,'"$ip"',g' \
+	-e 's,___REPO___,'"$repo"',g' \
+	-e 's,^___REPOACCESS_PRIVATE_KEY___$,'"$repoaccess_private_key"',' \
+	-e 's,^___REPOS_KNOWN_HOSTS_ENTRY___$,'"$repos_known_hosts_entry"',' \
+	tools/userdata_template)"
+
+nova boot --user_data <(echo "$userdata") --poll "$@" "$name"
+#sleep 1  # eek
+nova add-floating-ip "$name" "$ip"
+
