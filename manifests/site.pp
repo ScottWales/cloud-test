@@ -1,5 +1,5 @@
 
-import "helloworld"
+import "classes/*"
 
 node default {
 	include helloworld
