@@ -4,16 +4,16 @@
 
 dir="private/keys"
 
+name="$1"
+repo="$2"
+ip="$3"
+shift 3
+
 if [ ! -d "$dir" ]; then
 	echo "Error: Cannot find $dir"
 	echo "Did you run this from the base Puppet repository directory?"
 	exit 1
 fi
-
-name="$1"
-repo="$2"
-ip="$3"
-shift 3
 
 if [ "$name" = "" -o "$ip" = "" -o "$repo" = "" ]; then
 	echo "Error: Usage: nova-boot <name> <repo> <ip> ..."
