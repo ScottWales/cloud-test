@@ -33,7 +33,6 @@ case "$repo_userhost" in
 		repo_host="$repo_userhost"
 		;;
 esac
-#repos_known_hosts_entry="repos.nci.org.au,192.43.239.99 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAv0YmSV894Dul2cCS/VCKhY5pZohdvhgaeYrKlcXHuCgMwgLAvClhK7Dp6SX7uukBhdSkn+58eEFbw0WtwYpMbmuoJKS+2ZiXVQb+GN2WheTowwfSDwIi5nzISHF98k7y1NUlrBVSxrDVJjqw5Qs0bpGbznjGhE7yy/PZqAwB2ckJ0/EnSc6OXGeiEAOoj5w2anaBuMholdqO3n35K4r/dh+/WTn3GD8TOp5UMSOyXguRQcIOcJGPltmILQngb76IZ36FbHSsbbS8mQd4W85dc+AP6+4BHBsMfl7C9p9uZ03YjTY0FdERigMOJmYdGuB8pnyX8nRdQT+7UdR3jjj6DQ=="
 repos_known_hosts_entry="$(ssh-keyscan "$repo_host")"
 
 userdata="$(sed \
@@ -45,6 +44,6 @@ userdata="$(sed \
 	tools/userdata_template)"
 
 nova boot --user_data <(echo "$userdata") --poll "$@" "$name"
-#sleep 1  # eek
+# FIXME: this ought to be possible in nova boot - but how??
 nova add-floating-ip "$name" "$ip"
 
