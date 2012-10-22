@@ -32,13 +32,17 @@ hostname ___NAME___.os
 # Temporary: This will get into the system image.
 yum -y install git
 
+# FIXME: git config --global user.name ...
+# FIXME: git config --global user.email ...
+
 cd /etc
 [ -e puppet ] && rm -rf puppet.old && mv -i puppet puppet.old
 git clone ___REPO___ puppet
-cd puppet
+ln -s /etc/puppet /puppet
+cd /puppet
 git submodule init
 git submodule update
-puppet apply /etc/puppet/manifests/site.pp
+puppet apply /puppet/manifests/site.pp
 
 ) 2>&1 | tee /tmp/userdata.log
 
