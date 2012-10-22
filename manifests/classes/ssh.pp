@@ -36,7 +36,7 @@ class ssh {
 		"/etc/ssh/ssh_host${title}key":
 			ensure => present,
 			source => "/puppet/private/keys/hostkeys/ssh_host${title}key",
-			mode => 0640,
+			mode => 0600,
 			owner => 'root',
 			group => 'root',
 			require => Package['openssh-server'],
