@@ -26,6 +26,7 @@ Give a public IP
 $ nova floating-ip-list
 $ nova add-floating-ip NAME IP
 
+Initialise puppet using nova's user data script
 
 === Links: ===
 puppetforge - contributed setup scripts
