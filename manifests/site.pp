@@ -8,6 +8,9 @@ class helloworld {
 	}
 }
 
+import "classes/*"
+
 node default {
     include helloworld
+    include python-2.7
 }
