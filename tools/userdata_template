@@ -32,8 +32,8 @@ hostname ___NAME___.os
 # Temporary: This will get into the system image.
 yum -y install git
 
-# FIXME: git config --global user.name ...
-# FIXME: git config --global user.email ...
+git config --global user.name '___GIT_NAME___'
+git config --global user.email '___GIT_EMAIL___'
 
 cd /etc
 [ -e puppet ] && rm -rf puppet.old && mv -i puppet puppet.old

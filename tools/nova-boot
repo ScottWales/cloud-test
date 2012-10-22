@@ -35,10 +35,15 @@ case "$repo_userhost" in
 esac
 repos_known_hosts_entry="$(ssh-keyscan "$repo_host")"
 
+git_name="$(git config --get user.name)"
+git_email="$(git config --get user.email)"
+
 userdata="$(sed \
 	-e 's,___NAME___,'"$name"',g' \
 	-e 's,___IP___,'"$ip"',g' \
 	-e 's,___REPO___,'"$repo"',g' \
+	-e 's,___GIT_NAME___,'"$git_name"',g' \
+	-e 's,___GIT_EMAIL___,'"$git_email"',g' \
 	-e 's,^___REPOACCESS_PRIVATE_KEY___$,'"$repoaccess_private_key"',' \
 	-e 's,^___REPOS_KNOWN_HOSTS_ENTRY___$,'"$repos_known_hosts_entry"',' \
 	tools/userdata_template)"
