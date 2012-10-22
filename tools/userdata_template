@@ -32,6 +32,7 @@ hostname ___NAME___.os
 # Temporary: This will get into the system image.
 yum -y install git
 
+export HOME=/root
 git config --global user.name '___GIT_NAME___'
 git config --global user.email '___GIT_EMAIL___'
 
