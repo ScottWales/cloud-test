@@ -1,0 +1,11 @@
+#!/bin/bash
+
+NAME=test
+IMAGE=ba3bc28e-5f6e-4d39-b601-fbc9491cd8e0
+KEY=laptop
+FLAVOUR=m1.small
+SECGROUP=ssh
+
+nova boot $NAME --image $IMAGE --key-name $KEY --flavor $FLAVOUR \
+    --security_groups $SECGROUP --user-data ./user-data --poll
+nova list

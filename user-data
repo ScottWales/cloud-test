@@ -1,0 +1,8 @@
+#cloud-config
+packages:
+- puppet
+- git
+
+run-cmd:
+- echo "hello world" > /tmp/out
+- git clone git://github.com/ScottWales/cloud-test /etc/puppet-repo 2>&1 /tmp/git
