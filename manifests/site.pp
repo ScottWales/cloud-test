@@ -25,7 +25,7 @@ class cylc {
     package { ['python2.7','graphviz','graphviz-dev']:
         ensure => installed,
     }
-    package { 'python-pip':
+    package { ['python-pip','python-gtk2']:
         ensure => installed,
         require => Package['python2.7'],
     }
