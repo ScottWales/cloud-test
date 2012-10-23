@@ -92,7 +92,7 @@ include jinja
     git::repo{ '/usr/local/rose' :
         source => "git://github.com/metomi/rose.git"
     }
-    prepend-path{ 'usr/local/rose/bin' :
+    prepend-path{ '/usr/local/rose/bin' :
     }
 }
 
