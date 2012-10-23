@@ -1,5 +1,7 @@
 import "classes/*"
 
+Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
+
 class git {
     package {'git':
         ensure => latest,
@@ -30,7 +32,8 @@ class cylc {
     git::repo{ '/usr/local/cylc' :
         source => "git://github.com/cylc/cylc"
     }
-    prepend-path{ '/usr/local/cylc/bin' }
+    prepend-path{ '/usr/local/cylc/bin':
+    }
 }
 
 node default {
