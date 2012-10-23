@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Run this from the base Puppet repository directory.
+
+dir="private/keys"
+
+name="$1"
+repo="$2"
+ip="$3"
+shift 3
+
+if [ ! -d "$dir" ]; then
+	echo "Error: Cannot find $dir"
+	echo "Did you run this from the base Puppet repository directory?"
+	exit 1
+fi
+
+if [ "$name" = "" -o "$ip" = "" -o "$repo" = "" ]; then
+	echo "Error: Usage: nova-boot <name> <repo> <ip> ..."
+	exit 1
+fi
+
+repoaccess_private_key="$(awk '{if(NR==1)t=$0; else t=t"\\\n"$0;} END{ printf("%s",t)}' private/keys/repoaccess)"
+
+# Need to extract the hostname part out of the repo, and then
+# query it for its hostkey.
+repo_userhost="${repo%%:*}"
+case "$repo_userhost" in
+	*@*)
+		repo_host="${repo_userhost#*@}"
+		;;
+	*)
+		repo_host="$repo_userhost"
+		;;
+esac
+repos_known_hosts_entry="$(ssh-keyscan "$repo_host")"
+
+git_name="$(git config --get user.name)"
+git_email="$(git config --get user.email)"
+
+userdata="$(sed \
+	-e 's,___NAME___,'"$name"',g' \
+	-e 's,___IP___,'"$ip"',g' \
+	-e 's,___REPO___,'"$repo"',g' \
+	-e 's,___GIT_NAME___,'"$git_name"',g' \
+	-e 's,___GIT_EMAIL___,'"$git_email"',g' \
+	-e 's,^___REPOACCESS_PRIVATE_KEY___$,'"$repoaccess_private_key"',' \
+	-e 's,^___REPOS_KNOWN_HOSTS_ENTRY___$,'"$repos_known_hosts_entry"',' \
+	tools/userdata_template)"
+
+nova boot --user_data <(echo "$userdata") --poll "$@" "$name"
+# FIXME: this ought to be possible in nova boot - but how??
+nova add-floating-ip "$name" "$ip"
+
