@@ -22,7 +22,7 @@ define prepend-path($path = "PATH"){
 }
 
 class cylc {
-    package { ['python2.7','graphviz-dev','python-pip']:
+    package { ['python2.7','graphviz-dev']:
         ensure => installed,
     }
     package { 'python-pip':
