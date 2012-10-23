@@ -5,7 +5,7 @@ class dircolors {
 
 	file { '/root/.dir_colors':
 		ensure => present,
-		source => "/puppet/files/dir_colors",
+		source => "puppet:///modules/dircolors/dir_colors",
 		owner => 'root',
 		group => 'root',
 		mode => 0644,
