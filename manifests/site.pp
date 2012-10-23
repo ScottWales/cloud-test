@@ -12,16 +12,23 @@ define git::repo ($source) {
         path => '/usr/bin'
     }
 }
-#define pip::package {
-#    include pip
-#    exec { "pip install $title":
-#    }
-#}
 
 class test-repo {
     git::repo{'/tmp/repo':
         source => "git://github.com/ScottWales/cloud-test"
     }
+}
+
+define prepend-path($path = "PATH"){
+    exec { "echo PATH=$path:\$PATH >> /etc/bash.bashrc":
+        # TODO: Don't add path if already in bashrc
+    }
+}
+class cylc {
+    git::repo{ '/usr/local/cylc' :
+        source => "git://github.com/cylc/cylc"
+    }
+    prepend-path{ '/usr/local/cylc/bin' }
 }
 
 node default {
