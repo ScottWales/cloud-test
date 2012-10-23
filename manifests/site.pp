@@ -22,12 +22,13 @@ define prepend-path($path = "PATH"){
 }
 
 class cylc {
-    package { ['python2.7','graphviz','python-pip']:
+    package { ['python2.7','graphviz-dev','python-pip']:
         ensure => installed,
     }
     package { ['pyro','pygraphviz','jinja2']:
         ensure => installed,
         provider => pip
+        after => package['python-pip']
     }
 
     git::repo{ '/usr/local/cylc' :
