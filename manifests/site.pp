@@ -5,10 +5,11 @@ class git {
         ensure => latest,
     }
 }
-define git::repo ($repo) {
+define git::repo ($source) {
     include git
     exec { "git clone $source $title":  
         creates => $title
+        path => '/usr/bin'
     }
 }
 #define pip::package {
