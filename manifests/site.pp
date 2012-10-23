@@ -22,7 +22,7 @@ define prepend-path($path = "PATH"){
 }
 
 class cylc {
-    package { ['python2.7','graphviz','graphviz-dev']:
+    package { ['python2.7-dev','python2.7','graphviz-dev','gcc','pkg-config']:
         ensure => installed,
     }
     package { ['python-pip','python-gtk2']:
@@ -37,7 +37,8 @@ class cylc {
     package { 'pygraphviz':
         ensure => installed,
         provider => pip,
-        require => Package['python-pip','graphviz','graphviz-dev'],
+        require =>
+        Package['python2.7-dev','python-pip','graphviz','graphviz-dev','gcc','pkg-config'],
     }
 
     git::repo{ '/usr/local/cylc' :
