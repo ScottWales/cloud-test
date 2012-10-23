@@ -1,5 +1,3 @@
-import "classes/*"
-
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
 class git {
@@ -11,7 +9,12 @@ define git::repo ($source) {
     include git
     exec { "git clone $source $title":  
         creates => $title,
-        path => '/usr/bin',
+    }
+}
+define git::repo_branch ($source, $branch) {
+    include git
+    exec { "git clone $source $title --branch $branch":  
+        creates => $title,
     }
 }
 
@@ -38,7 +41,7 @@ class cylc {
         ensure => installed,
         provider => pip,
         require =>
-        Package['python2.7-dev','python-pip','graphviz','graphviz-dev','gcc','pkg-config'],
+        Package['python2.7-dev','python-pip','graphviz-dev','gcc','pkg-config'],
     }
 
     git::repo{ '/usr/local/cylc' :
@@ -48,6 +51,29 @@ class cylc {
     }
 }
 
+class rose {
+    package { ['python2.7-dev','python2.7','subversion']:
+        ensure => installed,
+    }
+    package { ['python-pip','python-gtk2']:
+        ensure => installed,
+        require => Package['python2.7'],
+    }
+    package { ['pyro','jinja2','cherrypy','requests','simplejson','sqlalchemy']:
+        ensure => installed,
+        provider => pip,
+        require => Package['python-pip'],
+    }
+
+    include cylc
+    git::repo{ '/usr/local/rose' :
+        source => "git://github.com/metomi/rose.git"
+    }
+    prepend-path{ 'usr/local/rose/bin' :
+    }
+}
+
 node default {
     include cylc
+    include rose
 }
