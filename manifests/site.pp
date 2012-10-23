@@ -24,15 +24,39 @@ define prepend-path($path = "PATH"){
     }
 }
 
-class cylc {
-    package { ['python2.7-dev','python2.7','graphviz-dev','gcc','pkg-config']:
+class python {
+    package { ['python2.7-dev','python2.7']:
         ensure => installed,
     }
-    package { ['python-pip','python-gtk2']:
+    package { ['python-pip']:
         ensure => installed,
         require => Package['python2.7'],
     }
-    package { ['pyro','jinja2']:
+}
+class pygtk {
+	include python
+    package { 'python-gtk2':
+        ensure => installed,
+        require => Package['python2.7'],
+    }
+}
+class jinja {
+include python
+    package { ['jinja2']:
+        ensure => installed,
+        provider => pip,
+        require => Package['python-pip'],
+    }
+}
+
+class cylc {
+	include python
+include pygtk
+include jinja
+    package { ['graphviz-dev','gcc','pkg-config']:
+	ensure => installed,
+    }
+    package { ['pyro']:
         ensure => installed,
         provider => pip,
         require => Package['python-pip'],
@@ -52,14 +76,13 @@ class cylc {
 }
 
 class rose {
-    package { ['python2.7-dev','python2.7','subversion']:
+	include python
+include pygtk
+include jinja
+    package { ['subversion']:
         ensure => installed,
     }
-    package { ['python-pip','python-gtk2']:
-        ensure => installed,
-        require => Package['python2.7'],
-    }
-    package { ['pyro','jinja2','cherrypy','requests','simplejson','sqlalchemy']:
+    package { ['cherrypy','requests','simplejson','sqlalchemy']:
         ensure => installed,
         provider => pip,
         require => Package['python-pip'],
