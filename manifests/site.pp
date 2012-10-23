@@ -25,10 +25,19 @@ class cylc {
     package { ['python2.7','graphviz-dev','python-pip']:
         ensure => installed,
     }
-    package { ['pyro','pygraphviz','jinja2']:
+    package { 'python-pip':
         ensure => installed,
-        provider => pip
-        after => package['python-pip']
+        require => Package['python2.7'],
+    }
+    package { ['pyro','jinja2']:
+        ensure => installed,
+        provider => pip,
+        require => Package['python-pip'],
+    }
+    package { 'pygraphviz':
+        ensure => installed,
+        provider => pip,
+        require => Package['python-pip','graphviz'],
     }
 
     git::repo{ '/usr/local/cylc' :
