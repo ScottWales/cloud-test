@@ -37,7 +37,7 @@ class cylc {
     package { 'pygraphviz':
         ensure => installed,
         provider => pip,
-        require => Package['python-pip','graphviz'],
+        require => Package['python-pip','graphviz-dev'],
     }
 
     git::repo{ '/usr/local/cylc' :
