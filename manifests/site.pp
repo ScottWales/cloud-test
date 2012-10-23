@@ -8,23 +8,25 @@ class git {
 define git::repo ($source) {
     include git
     exec { "git clone $source $title":  
-        creates => $title
-        path => '/usr/bin'
-    }
-}
-
-class test-repo {
-    git::repo{'/tmp/repo':
-        source => "git://github.com/ScottWales/cloud-test"
+        creates => $title,
+        path => '/usr/bin',
     }
 }
 
 define prepend-path($path = "PATH"){
-    exec { "echo PATH=$path:\$PATH >> /etc/bash.bashrc":
+    exec { "echo PATH=$title:\$PATH >> /etc/bash.bashrc":
         # TODO: Don't add path if already in bashrc
     }
 }
+
 class cylc {
+    package { ['python2.7','graphviz']:
+        ensure => installed,
+    }
+    package { ['pyro','pygraphviz','jinja2']:
+        ensure => installed,
+    }
+
     git::repo{ '/usr/local/cylc' :
         source => "git://github.com/cylc/cylc"
     }
@@ -32,7 +34,5 @@ class cylc {
 }
 
 node default {
-    include 'python-2_7'
-    include 'clang'
-    include test-repo
+    include cylc
 }
