@@ -14,5 +14,5 @@ SECGROUP=ssh
 
 # Boot and show IP
 nova boot $NAME --image $IMAGE --key-name $KEY --flavor $FLAVOUR \
-    --security_groups $SECGROUP --user-data ./user-data --poll
+    --security_groups $SECGROUP --user-data ./user-data.ubuntu --poll
 nova list
