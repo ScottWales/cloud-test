@@ -1,11 +1,18 @@
 #!/bin/bash
+# Script to boot an instance on the Melbourne cloud.
+# Requries openstack credentials to be loaded in the environment
+# (i.e. source openrc.sh)
 
+# Change these to the desired machine name & ssh key
 NAME=test
-IMAGE=ba3bc28e-5f6e-4d39-b601-fbc9491cd8e0
 KEY=laptop
+
+# Ubuntu 12.04 LTS image
+IMAGE=ba3bc28e-5f6e-4d39-b601-fbc9491cd8e0
 FLAVOUR=m1.small
 SECGROUP=ssh
 
+# Boot and show IP
 nova boot $NAME --image $IMAGE --key-name $KEY --flavor $FLAVOUR \
     --security_groups $SECGROUP --user-data ./user-data --poll
 nova list
