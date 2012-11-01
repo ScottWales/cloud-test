@@ -95,3 +95,12 @@ include jinja
     prepend-path{ '/usr/local/rose/bin' :
     }
 }
+
+class fcm {
+    git::repo{'/usr/local/fcm' :
+        source => "git://github.com/metomi/fcm.git"
+    }
+    prepend-path{'/usr/local/fcm/bin' :
+    }
+}
+}
